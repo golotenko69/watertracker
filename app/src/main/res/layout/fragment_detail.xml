@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="12dp"
+            android:clickable="true"
+            android:focusable="true">
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_back" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="Назад"
+                android:textColor="@color/accent_blue"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/detail_title"
+            style="@style/Theme.WaterTracker.CardTitle"
+            android:textSize="24sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="18dp"
+            android:text="@string/detail_subtitle"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_card_rounded"
+            android:padding="24dp">
+
+            <FrameLayout
+                android:layout_width="120dp"
+                android:layout_height="120dp">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_circle_outline" />
+                <ImageView
+                    android:id="@+id/iv_icon"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="center"
+                    tools:src="@drawable/ic_water_drop" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/text_primary"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                tools:text="0.85 cups" />
+
+            <TextView
+                android:id="@+id/tv_type_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="15sp"
+                tools:text="Вода" />
+
+            <ProgressBar
+                android:id="@+id/progress_of_goal"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginTop="18dp"
+                android:max="100"
+                android:progressDrawable="@drawable/water_progress_drawable" />
+
+            <TextView
+                android:id="@+id/tv_percent_of_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                tools:text="7% от дневной цели" />
+        </LinearLayout>
+
+        <com.watertracker.app.ui.detail.DetailRow
+            android:id="@+id/row_amount_ml"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            app:rowLabel="Количество (мл)" />
+
+        <com.watertracker.app.ui.detail.DetailRow
+            android:id="@+id/row_original_unit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:rowLabel="В оригинальных единицах" />
+
+        <com.watertracker.app.ui.detail.DetailRow
+            android:id="@+id/row_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:rowLabel="Дата" />
+
+        <com.watertracker.app.ui.detail.DetailRow
+            android:id="@+id/row_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:rowLabel="Время" />
+
+        <com.watertracker.app.ui.detail.DetailRow
+            android:id="@+id/row_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:rowLabel="Заметка" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_edit"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="@string/edit"
+                app:icon="@drawable/ic_edit"
+                app:backgroundTint="@color/bg_card_alt"
+                app:cornerRadius="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_delete"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="@string/delete"
+                android:textColor="@color/error"
+                app:icon="@drawable/ic_delete"
+                app:iconTint="@color/error"
+                app:backgroundTint="@color/bg_card_alt"
+                app:cornerRadius="12dp" />
+        </LinearLayout>
+
+        <View android:layout_width="match_parent" android:layout_height="40dp" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
