@@ -38,6 +38,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         setupList()
         setupQuickAddButtons()
         setupSearch()
+        setupFilters()
         observeData()
 
         binding.fabAdd.setOnClickListener {
@@ -89,6 +90,51 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 }
             }
             binding.quickAddContainer.addView(tv)
+        }
+    }
+
+    /**
+     * Раздел 2.3 ТЗ: минимум 2 фильтра, работающих вместе — по типу напитка
+     * и по периоду (дате). Оба фильтра одновременно применяются к запросу в БД.
+     */
+    private fun setupFilters() {
+        // Фильтр по типу напитка ("Все" + список типов из БД)
+        viewModel.drinkTypes.observe(viewLifecycleOwner) { types ->
+            if (binding.chipGroupTypeFilter.childCount > 0) return@observe
+            val chipAll = com.google.android.material.chip.Chip(requireContext()).apply {
+                text = "Все типы"
+                isCheckable = true
+                isChecked = true
+                tag = -1L
+            }
+            binding.chipGroupTypeFilter.addView(chipAll)
+            types.forEach { type ->
+                val chip = com.google.android.material.chip.Chip(requireContext()).apply {
+                    text = type.name
+                    isCheckable = true
+                    tag = type.id
+                }
+                binding.chipGroupTypeFilter.addView(chip)
+            }
+            binding.chipGroupTypeFilter.setOnCheckedStateChangeListener { group, checkedIds ->
+                val checkedChip = checkedIds.firstOrNull()?.let { group.findViewById<com.google.android.material.chip.Chip>(it) }
+                viewModel.setDrinkTypeFilter((checkedChip?.tag as? Long) ?: -1L)
+            }
+        }
+
+        // Фильтр по периоду
+        val periods = listOf("Всё время" to -1, "Сегодня" to 0, "7 дней" to 7, "30 дней" to 30)
+        periods.forEach { (label, days) ->
+            val chip = com.google.android.material.chip.Chip(requireContext()).apply {
+                text = label
+                isCheckable = true
+                isChecked = days == -1
+            }
+            chip.setOnClickListener {
+                val from = if (days == -1) -1L else com.watertracker.app.utils.DateUtils.daysAgoMillis(days)
+                viewModel.setDateRangeFilter(from, -1L)
+            }
+            binding.chipGroupDateFilter.addView(chip)
         }
     }
 
