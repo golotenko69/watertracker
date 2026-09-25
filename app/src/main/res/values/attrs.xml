@@ -3,4 +3,7 @@
     <declare-styleable name="DetailRow">
         <attr name="rowLabel" format="string" />
     </declare-styleable>
+    <declare-styleable name="SortOptionRow">
+        <attr name="optionLabel" format="string" />
+    </declare-styleable>
 </resources>
