@@ -24,6 +24,9 @@ class AddEditViewModel(
     private val _saveResult = MutableLiveData<SaveResult?>()
     val saveResult: LiveData<SaveResult?> = _saveResult
 
+    private val _isSaving = MutableLiveData(false)
+    val isSaving: LiveData<Boolean> = _isSaving
+
     init {
         if (isEditMode) {
             viewModelScope.launch {
@@ -49,24 +52,32 @@ class AddEditViewModel(
         }
 
         viewModelScope.launch {
-            if (isEditMode) {
-                val current = _existingEntry.value?.entry
-                if (current != null) {
-                    repository.updateEntry(
-                        current.copy(drinkTypeId = drinkTypeId, amountMl = amount, note = note)
+            _isSaving.value = true
+            try {
+                if (isEditMode) {
+                    val current = _existingEntry.value?.entry
+                    if (current != null) {
+                        repository.updateEntry(
+                            current.copy(drinkTypeId = drinkTypeId, amountMl = amount, note = note)
+                        )
+                    }
+                } else {
+                    repository.addEntry(
+                        WaterEntry(
+                            drinkTypeId = drinkTypeId,
+                            amountMl = amount,
+                            note = note,
+                            timestampMillis = System.currentTimeMillis()
+                        )
                     )
                 }
-            } else {
-                repository.addEntry(
-                    WaterEntry(
-                        drinkTypeId = drinkTypeId,
-                        amountMl = amount,
-                        note = note,
-                        timestampMillis = System.currentTimeMillis()
-                    )
-                )
+                _saveResult.value = SaveResult.Success
+            } catch (e: Exception) {
+                // Раздел 2.4 ТЗ: ошибка при сохранении не должна приводить к краху приложения
+                _saveResult.value = SaveResult.Error("Не удалось сохранить запись. Попробуйте ещё раз.")
+            } finally {
+                _isSaving.value = false
             }
-            _saveResult.value = SaveResult.Success
         }
     }
 

@@ -105,6 +105,12 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
     }
 
     private fun observeViewModel() {
+        viewModel.isSaving.observe(viewLifecycleOwner) { saving ->
+            binding.progressSaving.visibility = if (saving) View.VISIBLE else View.GONE
+            binding.btnSave.isEnabled = !saving
+            binding.btnCancel.isEnabled = !saving
+        }
+
         viewModel.drinkTypes.observe(viewLifecycleOwner) { types ->
             val preselect = viewModel.existingEntry.value?.drinkType?.id
             typeAdapter.submitList(types, preselect)
