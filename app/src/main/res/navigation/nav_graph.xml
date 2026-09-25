@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.watertracker.app.ui.main.MainFragment"
+        android:label="Главная">
+        <action android:id="@+id/action_main_to_detail" app:destination="@id/detailFragment" />
+        <action android:id="@+id/action_main_to_addEdit" app:destination="@id/addEditFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addEditFragment"
+        android:name="com.watertracker.app.ui.addedit.AddEditFragment"
+        android:label="Добавить воду">
+        <argument android:name="entryId" app:argType="long" android:defaultValue="-1L" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.watertracker.app.ui.detail.DetailFragment"
+        android:label="Детальный просмотр">
+        <argument android:name="entryId" app:argType="long" />
+        <action android:id="@+id/action_detail_to_addEdit" app:destination="@id/addEditFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/statsFragment"
+        android:name="com.watertracker.app.ui.stats.StatsFragment"
+        android:label="Статистика" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.watertracker.app.ui.settings.SettingsFragment"
+        android:label="Настройки" />
+
+</navigation>

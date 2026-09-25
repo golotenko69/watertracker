@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Вода-трекер</string>
+
+    <string name="nav_home">Главная</string>
+    <string name="nav_add">Запись</string>
+    <string name="nav_stats">Статистика</string>
+    <string name="nav_settings">Настройки</string>
+
+    <string name="today_label">СЕГОДНЯ</string>
+    <string name="my_water">Моя вода</string>
+    <string name="search_hint">Поиск записей…</string>
+    <string name="empty_list_title">Записей пока нет</string>
+    <string name="empty_list_subtitle">Добавьте первую запись о потреблении жидкости</string>
+    <string name="add_entry_button">Добавить</string>
+
+    <string name="add_edit_title_add">Добавить воду</string>
+    <string name="add_edit_title_edit">Редактировать запись</string>
+    <string name="add_edit_subtitle">Запись о потреблении жидкости</string>
+    <string name="drink_type_label">ТИП НАПИТКА</string>
+    <string name="amount_label">КОЛИЧЕСТВО</string>
+    <string name="note_label">ЗАМЕТКА (НЕОБЯЗАТЕЛЬНО)</string>
+    <string name="save">Сохранить</string>
+    <string name="add">Добавить</string>
+    <string name="cancel">Отмена</string>
+
+    <string name="detail_title">Детальный просмотр</string>
+    <string name="detail_subtitle">Полная информация о записи</string>
+    <string name="edit">Редактировать</string>
+    <string name="delete">Удалить</string>
+    <string name="delete_confirm_title">Удалить запись?</string>
+    <string name="delete_confirm_message">Вы уверены, что хотите удалить эту запись? Это действие необратимо.</string>
+
+    <string name="stats_title">Статистика</string>
+    <string name="stats_subtitle">Анализ потребления жидкости</string>
+    <string name="stats_avg">Среднее в день</string>
+    <string name="stats_days_goal">Дней норма выполнена</string>
+    <string name="stats_total">Всего за период</string>
+    <string name="stats_best_day">Лучший день</string>
+    <string name="stats_chart_title">Ежедневное потребление</string>
+    <string name="stats_chart_subtitle">Пунктир = дневная цель</string>
+
+    <string name="settings_title">Настройки</string>
+    <string name="settings_subtitle">Персонализация приложения</string>
+    <string name="settings_goals">ЦЕЛИ И НОРМЫ</string>
+    <string name="settings_daily_goal">Дневная норма (мл)</string>
+    <string name="settings_units">ЕДИНИЦЫ ИЗМЕРЕНИЯ</string>
+    <string name="settings_sort">СОРТИРОВКА ЗАПИСЕЙ</string>
+    <string name="settings_sort_newest">Сначала новые</string>
+    <string name="settings_sort_oldest">Сначала старые</string>
+    <string name="settings_sort_amount">По количеству</string>
+    <string name="settings_reminders">НАПОМИНАНИЯ</string>
+    <string name="settings_reminders_toggle">Напоминания о воде</string>
+
+    <string name="error_empty_amount">Укажите количество</string>
+    <string name="error_invalid_amount">Введите корректное число</string>
+    <string name="loading">Загрузка…</string>
+    <string name="no_internet">Нет соединения — работаем офлайн</string>
+</resources>
