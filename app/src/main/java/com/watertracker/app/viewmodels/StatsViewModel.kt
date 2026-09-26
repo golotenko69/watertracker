@@ -31,22 +31,30 @@ class StatsViewModel(
     fun load(days: Int) {
         periodDays = days
         viewModelScope.launch {
-            val dailyTotals = repository.getDailyTotals(days)
-            val average = repository.getAverageDaily(days).toInt()
-            val total = repository.getTotal(days)
-            val best = repository.getBestDay(days)
-            val goal = prefs.dailyGoalMl
-            val daysGoalMet = dailyTotals.count { it.total >= goal }
+            try {
+                val dailyTotals = repository.getDailyTotals(days)
+                val average = repository.getAverageDaily(days).toInt()
+                val total = repository.getTotal(days)
+                val best = repository.getBestDay(days)
+                val goal = prefs.dailyGoalMl
+                val daysGoalMet = dailyTotals.count { it.total >= goal }
 
-            _uiState.value = StatsUiState(
-                dailyTotals = dailyTotals,
-                averageMl = average,
-                totalMl = total,
-                bestDayMl = best,
-                daysGoalMet = daysGoalMet,
-                periodDays = days,
-                goalMl = goal
-            )
+                _uiState.value = StatsUiState(
+                    dailyTotals = dailyTotals,
+                    averageMl = average,
+                    totalMl = total,
+                    bestDayMl = best,
+                    daysGoalMet = daysGoalMet,
+                    periodDays = days,
+                    goalMl = goal
+                )
+            } catch (e: Exception) {
+                // Не роняем экран статистики при сбое чтения БД — показываем пустое состояние
+                _uiState.value = StatsUiState(
+                    dailyTotals = emptyList(), averageMl = 0, totalMl = 0,
+                    bestDayMl = 0, daysGoalMet = 0, periodDays = days, goalMl = prefs.dailyGoalMl
+                )
+            }
         }
     }
 
