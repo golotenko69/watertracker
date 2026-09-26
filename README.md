@@ -104,6 +104,14 @@ com.watertracker.app/
   в этой среде (нет доступа к сети/Android SDK) — при первом открытии в
   Android Studio возможны мелкие правки после синхронизации зависимостей
   (особенно `MPAndroidChart` через JitPack).
+- **Gradle Wrapper**: `gradle/wrapper/gradle-wrapper.properties`, `gradlew` и
+  `gradlew.bat` включены и указывают на Gradle 8.7 (совместим с AGP 8.4.0),
+  но бинарный `gradle-wrapper.jar` не сгенерирован (среда без интернета).
+  При первом открытии проекта Android Studio сама предложит
+  "Gradle wrapper is not found — download now?" — согласитесь, и она
+  докачает всё нужное. Если баннера нет, выполните в терминале внутри
+  папки проекта: `gradle wrapper --gradle-version 8.7` (нужен любой
+  установленный Gradle) — это досоздаст `gradle-wrapper.jar`.
 - Иконки — простые векторные заглушки; при желании их можно заменить на
   Material Icons без изменения логики.
 - Push-уведомления для напоминаний используют `WorkManager` с интервалом
