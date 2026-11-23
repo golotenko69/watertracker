@@ -1,9 +1,8 @@
 package com.watertracker.app.ui.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import androidx.core.widget.doOnTextChanged
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,6 +13,7 @@ import com.watertracker.app.WaterTrackerApp
 import com.watertracker.app.databinding.FragmentMainBinding
 import com.watertracker.app.utils.PreferencesManager
 import com.watertracker.app.utils.UnitConverter
+import com.watertracker.app.viewmodels.MainViewModel
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -39,6 +39,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         setupQuickAddButtons()
         setupSearch()
         setupFilters()
+        binding.progressToday.progressDrawable = GlassProgressDrawable()
         observeData()
 
         binding.fabAdd.setOnClickListener {
@@ -72,17 +73,21 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         binding.quickAddContainer.removeAllViews()
         amounts.forEach { amount ->
             val tv = TextView(requireContext()).apply {
-                text = "+${amount}мл"
-                setTextColor(resources.getColor(R.color.text_primary, null))
+                text = "+$amount мл"
+                val featured = amount == 250
+                setTextColor(resources.getColor(if (featured) R.color.white else R.color.text_primary, null))
                 textSize = 13f
                 gravity = android.view.Gravity.CENTER
-                setBackgroundResource(R.drawable.bg_chip_unselected)
+                setBackgroundResource(if (featured) R.drawable.bg_portion_primary else R.drawable.bg_chip_unselected)
                 val params = android.widget.LinearLayout.LayoutParams(
                     0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1f
                 )
-                params.setMargins(6, 0, 6, 0)
+                val gap = (4 * resources.displayMetrics.density).roundToInt()
+                params.marginStart = if (amount == amounts.first()) 0 else gap
+                params.marginEnd = if (amount == amounts.last()) 0 else gap
                 layoutParams = params
-                setPadding(0, 28, 0, 28)
+                minHeight = (48 * resources.displayMetrics.density).roundToInt()
+                isFocusable = true
                 setOnClickListener {
                     viewModel.drinkTypes.value?.firstOrNull { it.iconKey == "water" }?.let { waterType ->
                         viewModel.quickAddWater(amount, waterType.id)
@@ -139,9 +144,9 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     }
 
     private fun setupSearch() {
-        binding.etSearch.addTextChangedListener(onTextChanged = { text, _, _, _ ->
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
             viewModel.setSearchQuery(text?.toString().orEmpty())
-        })
+        }
     }
 
     private fun observeData() {
@@ -149,7 +154,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             adapter.submitList(list)
             binding.emptyState.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
             binding.rvEntries.visibility = if (list.isEmpty()) View.GONE else View.VISIBLE
-            binding.tvEntriesCount.text = "${list.size} записей"
+            binding.tvEntriesCount.text = list.size.toString()
         }
 
         viewModel.todayTotalMl.observe(viewLifecycleOwner) { totalMl ->
@@ -159,15 +164,13 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             val remainingMl = (goalMl - totalMl).coerceAtLeast(0)
 
             binding.tvTodayAmount.text = UnitConverter.formatAmount(totalMl, unit)
-            binding.tvGoalAmount.text = "/ ${UnitConverter.formatAmount(goalMl, unit)}"
-            binding.tvGoalLabel.text = UnitConverter.formatAmount(goalMl, unit)
-            binding.tvTodayTotalSmall.text = UnitConverter.formatAmount(totalMl, unit)
+            binding.tvGoalAmount.text = getString(R.string.goal_readout, UnitConverter.formatAmount(goalMl, unit))
             binding.tvPercent.text = "$percent%"
-            binding.progressToday.progress = percent
-            binding.tvRemaining.text = if (remainingMl > 0) {
-                "Осталось ${UnitConverter.formatAmount(remainingMl, unit)} до цели"
-            } else {
-                "Дневная цель достигнута 🎉"
+            binding.progressToday.setProgress(percent, true)
+            binding.tvRemaining.text = when {
+                totalMl == 0 -> getString(R.string.buddy_start)
+                remainingMl == 0 -> getString(R.string.buddy_done)
+                else -> getString(R.string.buddy_remaining, UnitConverter.formatAmount(remainingMl, unit))
             }
         }
     }
@@ -176,17 +179,4 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         super.onDestroyView()
         _binding = null
     }
-}
-
-// Небольшой helper, т.к. Kotlin extension для addTextChangedListener из androidx.core может быть недоступен без core-ktx-widgets
-private fun android.widget.EditText.addTextChangedListener(
-    onTextChanged: (CharSequence?, Int, Int, Int) -> Unit
-) {
-    this.addTextChangedListener(object : android.text.TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            onTextChanged(s, start, before, count)
-        }
-        override fun afterTextChanged(s: android.text.Editable?) {}
-    })
 }

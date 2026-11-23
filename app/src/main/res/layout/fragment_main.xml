@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_primary">
+    android:background="@android:color/transparent">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -38,14 +38,15 @@
                         android:layout_height="wrap_content"
                         android:text="@string/my_water"
                         style="@style/Theme.WaterTracker.CardTitle"
-                        android:textSize="28sp" />
+                        android:textSize="36sp" />
                 </LinearLayout>
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:padding="8dp"
-                    android:background="@drawable/bg_chip_unselected"
-                    android:src="@drawable/ic_water_drop" />
+                <androidx.constraintlayout.utils.widget.ImageFilterView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:importantForAccessibility="no"
+                    app:roundPercent="0.4"
+                    app:saturation="0.16"
+                    android:src="@drawable/brand_logo" />
             </LinearLayout>
 
             <!-- Карточка прогресса -->
@@ -54,79 +55,93 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@drawable/bg_card_rounded"
-                android:padding="18dp">
+                android:padding="9dp"
+                android:elevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="142dp"
+                    android:background="@drawable/bg_sunlight"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:gravity="bottom">
-                    <TextView
-                        android:id="@+id/tv_today_amount"
-                        android:layout_width="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="8dp">
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/text_primary"
-                        android:textSize="30sp"
-                        android:textStyle="bold"
-                        tools:text="6.34 cups" />
-                    <TextView
-                        android:id="@+id/tv_goal_amount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="16sp"
-                        tools:text="/ 11.41 cups" />
-                    <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
-                    <TextView
-                        android:id="@+id/tv_percent"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/accent_blue"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
-                        tools:text="56%" />
+                        android:layout_weight="1"
+                        android:paddingVertical="10dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tv_today_amount"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="serif"
+                            android:textColor="@color/text_primary"
+                            android:textSize="32sp" />
+                        <TextView
+                            android:id="@+id/tv_goal_amount"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="15sp" />
+                        <TextView
+                            android:id="@+id/tv_percent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="serif"
+                            android:textStyle="italic"
+                            android:textColor="@color/accent_blue"
+                            android:textSize="20sp" />
+                    </LinearLayout>
+                    <ProgressBar
+                        android:id="@+id/progress_today"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="140dp"
+                        android:layout_weight="0.85"
+                        android:maxHeight="140dp"
+                        android:indeterminate="false"
+                        android:importantForAccessibility="no"
+                        android:max="100" />
                 </LinearLayout>
-
-                <ProgressBar
-                    android:id="@+id/progress_today"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:layout_marginTop="14dp"
-                    android:max="100"
-                    android:progressDrawable="@drawable/water_progress_drawable" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
-                    <TextView
-                        android:id="@+id/tv_entries_count"
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/buddy_drop" />
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp"
-                        tools:text="6 записей" />
-                    <TextView
-                        android:id="@+id/tv_goal_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="12sp"
-                        tools:text="11.41 cups" />
+                        android:layout_marginStart="12dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/buddy_name"
+                            android:textColor="@color/accent_blue"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tv_remaining"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            tools:text="@string/buddy_start" />
+                    </LinearLayout>
                 </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tv_remaining"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
-                    tools:text="Осталось 5.07 cups до цели" />
             </LinearLayout>
 
             <!-- Быстрое добавление -->
@@ -204,15 +219,18 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/today_label"
-                    style="@style/Theme.WaterTracker.SectionLabel" />
+                    android:text="@string/history_title"
+                    android:fontFamily="serif"
+                    android:textStyle="italic"
+                    android:textSize="24sp"
+                    android:textColor="@color/text_primary" />
                 <TextView
-                    android:id="@+id/tv_today_total_small"
+                    android:id="@+id/tv_entries_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/text_primary"
                     android:textSize="12sp"
-                    tools:text="6.34 cups" />
+                    tools:text="6" />
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -272,7 +290,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="20dp"
         android:backgroundTint="@color/accent_blue"
+        android:contentDescription="@string/add_entry_button"
         android:src="@drawable/ic_add"
-        app:tint="@color/white" />
+        app:tint="@color/bg_primary" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -21,67 +21,91 @@ import kotlin.math.roundToInt
 /**
  * "Изюминка" проекта (раздел 2.2 ТЗ): виджет на рабочий стол.
  * Показывает прогресс дня и позволяет добавить воду одним тапом с домашнего
- * экрана, без открытия приложения. Актуальные данные виджет берёт из
- * лёгкого кэша в SharedPreferences, который обновляет WidgetCacheUpdater
- * (см. WaterTrackerApp) при каждом изменении записей в БД.
+ * экрана. При обновлении считывает текущий итог дня из Room.
  */
 class WaterWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(context: Context, manager: AppWidgetManager, widgetIds: IntArray) {
-        widgetIds.forEach { id -> updateWidget(context, manager, id) }
+        receiveAsync {
+            val app = context.applicationContext as WaterTrackerApp
+            val session = app.session
+            val total = session?.repository?.observeTodayTotalMl()?.first() ?: 0
+            kotlinx.coroutines.withContext(Dispatchers.Main) {
+                if (app.session === session) {
+                    widgetIds.forEach { updateWidget(context, manager, it, total, session?.account?.id) }
+                }
+            }
+        }
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        if (intent.action == ACTION_QUICK_ADD) {
-            val amount = intent.getIntExtra(EXTRA_AMOUNT, 0)
-            if (amount > 0) addWaterAndRefresh(context, amount)
-        }
-    }
-
-    private fun addWaterAndRefresh(context: Context, amountMl: Int) {
-        val app = context.applicationContext as WaterTrackerApp
-        CoroutineScope(Dispatchers.IO).launch {
-            val waterType = app.repository.observeDrinkTypes().first()
-                .firstOrNull { it.iconKey == "water" } ?: return@launch
-            app.repository.addEntry(
-                WaterEntry(
-                    drinkTypeId = waterType.id,
-                    amountMl = amountMl,
-                    timestampMillis = System.currentTimeMillis()
-                )
-            )
+        if (intent.action != ACTION_QUICK_ADD) return
+        val amount = intent.getIntExtra(EXTRA_AMOUNT, 0)
+        if (amount !in listOf(150, 250, 350)) return
+        receiveAsync {
+            val app = context.applicationContext as WaterTrackerApp
+            val session = app.session ?: return@receiveAsync
+            if (intent.getStringExtra("profile") != session.account.id) return@receiveAsync
+            val water = session.repository.observeDrinkTypes().first().firstOrNull { it.iconKey == "water" }
+                ?: return@receiveAsync
+            session.repository.addEntry(WaterEntry(drinkTypeId = water.id, amountMl = amount,
+                timestampMillis = System.currentTimeMillis()))
             refreshAllWidgets(context)
         }
     }
 
-    private fun updateWidget(context: Context, manager: AppWidgetManager, widgetId: Int) {
-        val prefs = PreferencesManager(context)
+    private fun receiveAsync(action: suspend () -> Unit) {
+        val pending = goAsync()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                action()
+            } catch (error: Exception) {
+                android.util.Log.e("WaterWidget", "Ошибка обновления виджета", error)
+            } finally {
+                pending.finish()
+            }
+        }
+    }
+
+    private fun updateWidget(context: Context, manager: AppWidgetManager, widgetId: Int, total: Int, profileId: String?) {
         val views = RemoteViews(context.packageName, R.layout.water_widget)
-
-        val cache = context.getSharedPreferences(WidgetCacheUpdater.PREFS_NAME, Context.MODE_PRIVATE)
-        val cachedTotal = cache.getInt(WidgetCacheUpdater.KEY_TODAY_TOTAL_ML, 0)
-        val goal = prefs.dailyGoalMl
-        val percent = if (goal > 0) min(100, ((cachedTotal.toDouble() / goal) * 100).roundToInt()) else 0
-
-        views.setTextViewText(R.id.widget_total, "$cachedTotal / $goal мл")
+        val open = Intent(context, com.watertracker.app.ui.main.MainActivity::class.java)
+        views.setOnClickPendingIntent(R.id.widget_root, PendingIntent.getActivity(context, 0, open,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
+        if (profileId == null) {
+            views.setTextViewText(R.id.widget_total, "Войти в дневник")
+            views.setTextViewText(R.id.widget_percent, "")
+            for (button in listOf(R.id.widget_btn_150, R.id.widget_btn_250, R.id.widget_btn_350)) {
+                views.setViewVisibility(button, android.view.View.GONE)
+            }
+            manager.updateAppWidget(widgetId, views)
+            return
+        }
+        for (button in listOf(R.id.widget_btn_150, R.id.widget_btn_250, R.id.widget_btn_350)) {
+            views.setViewVisibility(button, android.view.View.VISIBLE)
+        }
+        val goal = PreferencesManager(context, profileId).dailyGoalMl
+        val percent = if (goal > 0) min(100, ((total.toDouble() / goal) * 100).roundToInt()) else 0
+        views.setTextViewText(R.id.widget_total, "$total / $goal мл")
         views.setTextViewText(R.id.widget_percent, "$percent%")
 
-        views.setOnClickPendingIntent(R.id.widget_btn_150, quickAddPendingIntent(context, widgetId, 150))
-        views.setOnClickPendingIntent(R.id.widget_btn_250, quickAddPendingIntent(context, widgetId, 250))
-        views.setOnClickPendingIntent(R.id.widget_btn_350, quickAddPendingIntent(context, widgetId, 350))
+        views.setOnClickPendingIntent(R.id.widget_btn_150, quickAddPendingIntent(context, widgetId, 150, profileId))
+        views.setOnClickPendingIntent(R.id.widget_btn_250, quickAddPendingIntent(context, widgetId, 250, profileId))
+        views.setOnClickPendingIntent(R.id.widget_btn_350, quickAddPendingIntent(context, widgetId, 350, profileId))
 
         manager.updateAppWidget(widgetId, views)
     }
 
-    private fun quickAddPendingIntent(context: Context, widgetId: Int, amount: Int): PendingIntent {
+    private fun quickAddPendingIntent(context: Context, widgetId: Int, amount: Int, profileId: String): PendingIntent {
         val intent = Intent(context, WaterWidgetProvider::class.java).apply {
             action = ACTION_QUICK_ADD
             putExtra(EXTRA_AMOUNT, amount)
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+            putExtra("profile", profileId)
+            data = android.net.Uri.parse("watertracker://widget/$widgetId/$profileId/$amount")
         }
         val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        return PendingIntent.getBroadcast(context, widgetId * 10 + amount, intent, flags)
+        return PendingIntent.getBroadcast(context, amount, intent, flags)
     }
 
     companion object {

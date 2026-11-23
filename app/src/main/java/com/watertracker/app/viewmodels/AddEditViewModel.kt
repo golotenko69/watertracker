@@ -37,6 +37,7 @@ class AddEditViewModel(
 
     /** Валидация + сохранение. Возвращает false через saveResult, если поля некорректны. */
     fun save(drinkTypeId: Long?, amountText: String, note: String?) {
+        if (_isSaving.value == true) return
         if (drinkTypeId == null) {
             _saveResult.value = SaveResult.Error("Выберите тип напитка")
             return
@@ -56,11 +57,10 @@ class AddEditViewModel(
             try {
                 if (isEditMode) {
                     val current = _existingEntry.value?.entry
-                    if (current != null) {
-                        repository.updateEntry(
-                            current.copy(drinkTypeId = drinkTypeId, amountMl = amount, note = note)
-                        )
-                    }
+                        ?: error("Запись недоступна")
+                    repository.updateEntry(
+                        current.copy(drinkTypeId = drinkTypeId, amountMl = amount, note = note)
+                    )
                 } else {
                     repository.addEntry(
                         WaterEntry(
@@ -72,6 +72,8 @@ class AddEditViewModel(
                     )
                 }
                 _saveResult.value = SaveResult.Success
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
             } catch (e: Exception) {
                 // Раздел 2.4 ТЗ: ошибка при сохранении не должна приводить к краху приложения
                 _saveResult.value = SaveResult.Error("Не удалось сохранить запись. Попробуйте ещё раз.")

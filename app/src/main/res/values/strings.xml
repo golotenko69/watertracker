@@ -56,4 +56,10 @@
     <string name="error_invalid_amount">Введите корректное число</string>
     <string name="loading">Загрузка…</string>
     <string name="no_internet">Нет соединения — работаем офлайн</string>
+    <string name="buddy_name">Капля</string>
+    <string name="buddy_start">Привет! Отметим первый стакан воды?</string>
+    <string name="buddy_remaining">До цели осталось %1$s</string>
+    <string name="buddy_done">Ура, цель на сегодня достигнута!</string>
+    <string name="history_title">Дневник напитков</string>
+    <string name="goal_readout">из %1$s за день</string>
 </resources>

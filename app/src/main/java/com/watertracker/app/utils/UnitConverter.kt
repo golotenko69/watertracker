@@ -26,8 +26,8 @@ object UnitConverter {
     fun formatAmount(ml: Int, unit: String): String {
         val value = mlToDisplay(ml, unit)
         val unitLabel = when (unit) {
-            Constants.UNIT_OZ -> "oz"
-            Constants.UNIT_CUPS -> "cups"
+            Constants.UNIT_OZ -> "унц."
+            Constants.UNIT_CUPS -> "стак."
             else -> "мл"
         }
         val numberPart = if (unit == Constants.UNIT_ML) {

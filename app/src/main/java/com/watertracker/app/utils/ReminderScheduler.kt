@@ -46,7 +46,8 @@ object ReminderScheduler {
 /** Worker, показывающий уведомление-напоминание выпить воды. */
 class ReminderWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
     override fun doWork(): Result {
-        val prefs = PreferencesManager(applicationContext)
+        val session = (applicationContext as com.watertracker.app.WaterTrackerApp).session ?: return Result.success()
+        val prefs = PreferencesManager(applicationContext, session.account.id)
         if (!prefs.remindersEnabled) return Result.success()
 
         val notification = NotificationCompat.Builder(applicationContext, ReminderScheduler.CHANNEL_ID)

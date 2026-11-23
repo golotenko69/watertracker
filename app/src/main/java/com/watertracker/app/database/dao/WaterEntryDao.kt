@@ -19,7 +19,7 @@ interface WaterEntryDao {
     suspend fun insert(entry: WaterEntry): Long
 
     @Update
-    suspend fun update(entry: WaterEntry)
+    suspend fun update(entry: WaterEntry): Int
 
     @Delete
     suspend fun delete(entry: WaterEntry)

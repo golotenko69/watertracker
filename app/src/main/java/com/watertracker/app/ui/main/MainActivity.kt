@@ -15,8 +15,19 @@ import com.watertracker.app.R
  */
 class MainActivity : AppCompatActivity() {
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("profile", (application as com.watertracker.app.WaterTrackerApp).session?.account?.id)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        val account = (application as com.watertracker.app.WaterTrackerApp).session?.account
+        super.onCreate(savedInstanceState?.takeIf { account != null && it.getString("profile") == account.id })
+        if (account == null) {
+            startActivity(android.content.Intent(this, com.watertracker.app.auth.AuthActivity::class.java))
+            finish()
+            return
+        }
         setContentView(R.layout.activity_main)
 
         val navHostFragment = supportFragmentManager

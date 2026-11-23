@@ -1,36 +1,54 @@
 package com.watertracker.app
 
 import android.app.Application
+import com.watertracker.app.auth.Account
+import com.watertracker.app.auth.AccountStore
 import com.watertracker.app.database.AppDatabase
 import com.watertracker.app.repository.WaterRepository
+import com.watertracker.app.utils.PreferencesManager
+import com.watertracker.app.utils.ReminderScheduler
+import com.watertracker.app.widget.WaterWidgetProvider
 import com.watertracker.app.widget.WidgetCacheUpdater
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 
-/**
- * Точка входа приложения. Здесь лениво создаются единственные на всё
- * приложение экземпляры базы данных и репозитория (простой service locator,
- * чтобы не тянуть в учебный проект отдельный DI-фреймворк).
- */
 class WaterTrackerApp : Application() {
+    val accounts by lazy { AccountStore(this) }
 
-    /** Живёт всё время работы процесса приложения — для фоновых наблюдателей вроде виджета. */
-    private val appScope = CoroutineScope(SupervisorJob())
-
-    val database: AppDatabase by lazy { AppDatabase.getInstance(this) }
-
-    val repository: WaterRepository by lazy {
-        WaterRepository(
-            entryDao = database.waterEntryDao(),
-            drinkTypeDao = database.drinkTypeDao(),
-            tagDao = database.tagDao(),
-            crossRefDao = database.entryTagCrossRefDao()
-        )
+    class Session(val account: Account, val repository: WaterRepository) {
+        val scope = CoroutineScope(SupervisorJob())
     }
+
+    @Volatile var session: Session? = null
+        private set
+    val repository get() = checkNotNull(session).repository
 
     override fun onCreate() {
         super.onCreate()
-        // "Изюминка": держим виджет на рабочем столе синхронизированным с БД
-        WidgetCacheUpdater.start(this, repository, appScope)
+        accounts.current()?.let { openSession(it, restoreReminders = false) }
+    }
+
+    fun openSession(account: Account, restoreReminders: Boolean = true) {
+        if (session?.account == account) return
+        session?.scope?.cancel()
+        val db = AppDatabase.open(this, account.id)
+        val repository = WaterRepository(db.waterEntryDao(), db.drinkTypeDao(), db.tagDao(), db.entryTagCrossRefDao())
+        val next = Session(account, repository)
+        accounts.remember(account)
+        session = next
+        WidgetCacheUpdater.start(this, repository, next.scope)
+        if (restoreReminders && PreferencesManager(this, account.id).remindersEnabled) {
+            ReminderScheduler.schedule(this)
+        }
+    }
+
+    fun logout() {
+        accounts.logout()
+        val old = session
+        session = null
+        old?.scope?.cancel()
+        ReminderScheduler.cancel(this)
+        WaterWidgetProvider.refreshAllWidgets(this)
     }
 }

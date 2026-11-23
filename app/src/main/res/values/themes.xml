@@ -1,25 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.WaterTracker" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="Theme.WaterTracker" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorSurface">@color/bg_card</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSecondary">@color/accent_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="chipStyle">@style/WaterFilterChip</item>
         <item name="colorPrimary">@color/accent_blue</item>
         <item name="colorPrimaryDark">@color/bg_primary</item>
         <item name="colorAccent">@color/accent_blue</item>
         <item name="android:windowBackground">@color/bg_primary</item>
         <item name="android:statusBarColor">@color/bg_primary</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
     </style>
 
-    <style name="Theme.WaterTracker.CardTitle">
+    <style name="WaterFilterChip" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/filter_surface</item>
         <item name="android:textColor">@color/text_primary</item>
-        <item name="android:textSize">22sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="checkedIconTint">@color/accent_blue</item>
     </style>
 
-    <style name="Theme.WaterTracker.SectionLabel">
+    <style name="Theme.WaterTracker.CardTitle" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="Theme.WaterTracker.SectionLabel" parent="">
         <item name="android:textColor">@color/text_secondary</item>
         <item name="android:textSize">12sp</item>
         <item name="android:letterSpacing">0.08</item>
+    </style>
+    <style name="WaterAuthField" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/bg_input</item>
+        <item name="boxCornerRadiusTopStart">7dp</item>
+        <item name="boxCornerRadiusTopEnd">7dp</item>
+        <item name="boxCornerRadiusBottomStart">7dp</item>
+        <item name="boxCornerRadiusBottomEnd">7dp</item>
+        <item name="hintTextColor">@color/accent_blue</item>
+    </style>
+    <style name="WaterBrandShape">
+        <item name="cornerSize">24%</item>
     </style>
 </resources>

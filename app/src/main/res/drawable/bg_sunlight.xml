@@ -1,0 +1,11 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <gradient android:angle="315" android:startColor="#C6CFC4"
+                android:centerColor="#E3E4CD" android:endColor="#AEBEB7" />
+        </shape>
+    </item>
+    <item>
+        <bitmap android:src="@drawable/site_paper" android:tileMode="repeat" />
+    </item>
+</layer-list>

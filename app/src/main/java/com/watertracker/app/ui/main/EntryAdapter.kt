@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.watertracker.app.database.entities.EntryWithDetails
 import com.watertracker.app.databinding.ItemWaterEntryBinding
 import com.watertracker.app.utils.DateUtils
-import com.watertracker.app.utils.IconMapper
 import com.watertracker.app.utils.UnitConverter
 
 /**
@@ -40,7 +39,6 @@ class EntryAdapter(
             binding.tvNote.text = item.entry.note?.takeIf { it.isNotBlank() } ?: "Без заметки"
             binding.tvAmount.text = UnitConverter.formatAmount(item.entry.amountMl, unitProvider())
             binding.tvTime.text = DateUtils.formatTime(item.entry.timestampMillis)
-            binding.ivIcon.setImageResource(IconMapper.forKey(item.drinkType.iconKey))
             binding.root.setOnClickListener { onClick(item) }
         }
     }

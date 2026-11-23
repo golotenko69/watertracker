@@ -33,6 +33,13 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         setupUnits()
         setupSort()
         setupReminders()
+        val app = requireActivity().application as com.watertracker.app.WaterTrackerApp
+        binding.accountEmail.text = app.session?.account?.email
+        binding.logout.setOnClickListener {
+            app.logout()
+            startActivity(android.content.Intent(requireContext(), com.watertracker.app.auth.AuthActivity::class.java)
+                .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK))
+        }
     }
 
     private fun setupDailyGoal() {
@@ -42,7 +49,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
         binding.sliderDailyGoal.addOnChangeListener { _, value, fromUser ->
             binding.tvDailyGoalValue.text = "${value.toInt()} мл"
-            if (fromUser) viewModel.setDailyGoal(value.toInt())
+            if (fromUser) {
+                viewModel.setDailyGoal(value.toInt())
+                com.watertracker.app.widget.WaterWidgetProvider.refreshAllWidgets(requireContext())
+            }
         }
     }
 

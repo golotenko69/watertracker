@@ -1,0 +1,143 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_paper">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="24dp"
+            android:orientation="vertical">
+            <androidx.constraintlayout.utils.widget.ImageFilterView
+                android:layout_width="82dp"
+                android:layout_height="82dp"
+                android:contentDescription="@string/app_name"
+                app:roundPercent="0.4"
+                    app:saturation="0.16"
+                    android:src="@drawable/brand_logo" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="22dp"
+                android:text="@string/app_name"
+                android:textColor="@color/text_primary"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_rounded"
+                android:orientation="vertical"
+                android:padding="20dp">
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"
+                    android:textSize="30sp"
+                    android:fontFamily="serif" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:id="@+id/local_hint"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/email_layout"
+                    style="@style/WaterAuthField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="Электронная почта">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="emailAddress"
+                        android:saveEnabled="true"
+                        android:singleLine="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="textEmailAddress" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/password_layout"
+                    style="@style/WaterAuthField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="Пароль"
+                    app:endIconMode="password_toggle">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="password"
+                        android:saveEnabled="false"
+                        android:singleLine="true"
+                        android:imeOptions="actionDone"
+                        android:inputType="textPassword" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/confirm_layout"
+                    style="@style/WaterAuthField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="Подтвердите пароль"
+                    app:endIconMode="password_toggle">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/confirm"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="newPassword"
+                        android:saveEnabled="false"
+                        android:singleLine="true"
+                        android:imeOptions="actionDone"
+                        android:inputType="textPassword" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:id="@+id/error"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:accessibilityLiveRegion="polite"
+                    android:textColor="@color/error"
+                    android:visibility="gone" />
+                <ProgressBar
+                    android:id="@+id/progress"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/submit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="52dp"
+                    android:layout_marginTop="16dp"
+                    android:textAllCaps="false"
+                    app:backgroundTint="@color/accent_blue_dark"
+                    android:textColor="@color/white"
+                    app:cornerRadius="7dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/switch_mode"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="false"
+                    android:textColor="@color/accent_blue" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

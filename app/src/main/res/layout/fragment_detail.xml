@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_primary">
+    android:background="@android:color/transparent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -79,7 +79,7 @@
                 android:layout_marginTop="16dp"
                 android:textColor="@color/text_primary"
                 android:textSize="30sp"
-                android:textStyle="bold"
+                android:fontFamily="serif"
                 tools:text="0.85 cups" />
 
             <TextView
@@ -154,9 +154,14 @@
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
                 android:text="@string/edit"
+                android:textColor="@color/text_primary"
+                android:textAllCaps="false"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:iconTint="@color/accent_blue"
                 app:icon="@drawable/ic_edit"
                 app:backgroundTint="@color/bg_card_alt"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="7dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_delete"
@@ -165,11 +170,12 @@
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:text="@string/delete"
+                android:textAllCaps="false"
                 android:textColor="@color/error"
                 app:icon="@drawable/ic_delete"
                 app:iconTint="@color/error"
                 app:backgroundTint="@color/bg_card_alt"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="7dp" />
         </LinearLayout>
 
         <View android:layout_width="match_parent" android:layout_height="40dp" />

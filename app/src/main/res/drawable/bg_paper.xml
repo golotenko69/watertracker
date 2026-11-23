@@ -1,0 +1,6 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/bg_primary" />
+    <item>
+        <bitmap android:src="@drawable/site_paper" android:tileMode="repeat" />
+    </item>
+</layer-list>

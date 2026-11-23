@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_primary">
+    android:background="@drawable/bg_paper">
+
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
@@ -22,6 +23,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/bg_card"
+        app:labelVisibilityMode="labeled"
         app:itemIconTint="@color/nav_item_color"
         app:itemTextColor="@color/nav_item_color"
         app:menu="@menu/bottom_nav_menu"

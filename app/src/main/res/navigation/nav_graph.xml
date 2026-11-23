@@ -8,8 +8,16 @@
         android:id="@+id/mainFragment"
         android:name="com.watertracker.app.ui.main.MainFragment"
         android:label="Главная">
-        <action android:id="@+id/action_main_to_detail" app:destination="@id/detailFragment" />
-        <action android:id="@+id/action_main_to_addEdit" app:destination="@id/addEditFragment" />
+        <action android:id="@+id/action_main_to_detail" app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            app:destination="@id/detailFragment" />
+        <action android:id="@+id/action_main_to_addEdit" app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            app:destination="@id/addEditFragment" />
     </fragment>
 
     <fragment
@@ -24,7 +32,11 @@
         android:name="com.watertracker.app.ui.detail.DetailFragment"
         android:label="Детальный просмотр">
         <argument android:name="entryId" app:argType="long" />
-        <action android:id="@+id/action_detail_to_addEdit" app:destination="@id/addEditFragment" />
+        <action android:id="@+id/action_detail_to_addEdit" app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            app:destination="@id/addEditFragment" />
     </fragment>
 
     <fragment

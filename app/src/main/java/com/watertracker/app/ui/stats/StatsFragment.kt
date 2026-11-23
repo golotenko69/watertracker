@@ -123,13 +123,16 @@ class StatsFragment : Fragment(R.layout.fragment_stats) {
 
         val accent = ContextCompat.getColor(requireContext(), R.color.accent_blue)
         val dataSet = BarDataSet(entries, "Потребление").apply {
-            color = accent
+            val sage = ContextCompat.getColor(requireContext(), R.color.bar_sage)
+            colors = state.dailyTotals.map { if (it.total == state.bestDayMl) accent else sage }
             setDrawValues(false)
             highLightColor = accent
         }
 
         binding.barChart.xAxis.valueFormatter =
             com.github.mikephil.charting.formatter.IndexAxisValueFormatter(labels)
+        binding.barChart.axisLeft.axisMinimum = 0f
+        binding.barChart.axisLeft.axisMaximum = maxOf(state.goalMl, state.bestDayMl, 1) * 1.12f
         binding.barChart.data = BarData(dataSet).apply { barWidth = 0.6f }
 
         // Пунктирная линия дневной цели

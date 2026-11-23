@@ -34,7 +34,8 @@ class SortOptionRow @JvmOverloads constructor(
         }
     }
 
-    fun setSelected(selected: Boolean) {
+    override fun setSelected(selected: Boolean) {
+        super.setSelected(selected)
         ivCheck.visibility = if (selected) View.VISIBLE else View.INVISIBLE
     }
 }

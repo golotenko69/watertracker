@@ -27,6 +27,8 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
 
     private val entryId: Long by lazy { arguments?.getLong("entryId", -1L) ?: -1L }
 
+    private var draftTypeId: Long? = null
+    private var fieldsInitialized = false
     private lateinit var typeAdapter: DrinkTypeAdapter
 
     private val viewModel: AddEditViewModel by viewModels {
@@ -43,6 +45,8 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
         binding.btnSave.text = if (viewModel.isEditMode)
             getString(R.string.save) else getString(R.string.add)
 
+        draftTypeId = savedInstanceState?.getLong("draftTypeId")?.takeIf { it > 0 }
+        fieldsInitialized = savedInstanceState?.getBoolean("fieldsInitialized") == true
         setupTypeGrid()
         setupAmountChips()
         setupNoteCounter()
@@ -51,7 +55,7 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
     }
 
     private fun setupTypeGrid() {
-        typeAdapter = DrinkTypeAdapter(onSelected = { clearAmountError() })
+        typeAdapter = DrinkTypeAdapter(onSelected = { draftTypeId = it.id })
         binding.rvDrinkTypes.layoutManager = GridLayoutManager(requireContext(), 4)
         binding.rvDrinkTypes.adapter = typeAdapter
     }
@@ -76,6 +80,10 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearAmountError()
+                for (i in 0 until binding.chipGroupAmounts.childCount) {
+                    val chip = binding.chipGroupAmounts.getChildAt(i) as Chip
+                    chip.isChecked = chip.text.toString() == s.toString()
+                }
             }
             override fun afterTextChanged(s: Editable?) {}
         })
@@ -112,18 +120,22 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
         }
 
         viewModel.drinkTypes.observe(viewLifecycleOwner) { types ->
-            val preselect = viewModel.existingEntry.value?.drinkType?.id
+            val preselect = draftTypeId ?: viewModel.existingEntry.value?.drinkType?.id
             typeAdapter.submitList(types, preselect)
         }
 
         viewModel.existingEntry.observe(viewLifecycleOwner) { details ->
             details ?: return@observe
-            typeAdapter.submitList(viewModel.drinkTypes.value ?: emptyList(), details.drinkType.id)
+            typeAdapter.submitList(viewModel.drinkTypes.value ?: emptyList(), draftTypeId ?: details.drinkType.id)
+            if (fieldsInitialized) return@observe
+            fieldsInitialized = true
             binding.etAmount.setText(details.entry.amountMl.toString())
             binding.etNote.setText(details.entry.note)
         }
 
         viewModel.saveResult.observe(viewLifecycleOwner) { result ->
+            if (result == null) return@observe
+            viewModel.consumeSaveResult()
             when (result) {
                 is AddEditViewModel.SaveResult.Success -> {
                     findNavController().popBackStack()
@@ -131,9 +143,7 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
                 is AddEditViewModel.SaveResult.Error -> {
                     showFieldError(result.message)
                 }
-                null -> Unit
             }
-            viewModel.consumeSaveResult()
         }
     }
 
@@ -148,6 +158,12 @@ class AddEditFragment : Fragment(R.layout.fragment_add_edit) {
     private fun clearAmountError() {
         binding.tvAmountError.visibility = View.GONE
         binding.etAmount.setBackgroundResource(R.drawable.bg_input_field)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("fieldsInitialized", fieldsInitialized)
+        typeAdapter.selectedType()?.let { outState.putLong("draftTypeId", it.id) }
     }
 
     override fun onDestroyView() {

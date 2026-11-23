@@ -47,11 +47,9 @@ class WaterRepository(
             id
         }
 
-    suspend fun updateEntry(entry: WaterEntry, tags: List<Tag> = emptyList()) =
+    suspend fun updateEntry(entry: WaterEntry) =
         withContext(Dispatchers.IO) {
-            entryDao.update(entry)
-            crossRefDao.clearTagsForEntry(entry.id)
-            linkTags(entry.id, tags)
+            check(entryDao.update(entry) == 1) { "Запись недоступна" }
         }
 
     suspend fun deleteEntry(entry: WaterEntry) = withContext(Dispatchers.IO) {
